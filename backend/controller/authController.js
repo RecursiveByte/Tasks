@@ -4,6 +4,110 @@ import jwt from 'jsonwebtoken';
 
 const connection = await connectToDatabase();
 
+export const finalData = async (req, res) => {
+  try {
+    const [rows] = await connection.execute(`
+      SELECT 
+        books.id AS book_id,
+        books.title,
+        books.author,
+        books.year,
+        books.availability,
+        reviews.id AS review_id,
+        reviews.user_id,
+        reviews.rating,
+        reviews.comment
+      FROM books
+      LEFT JOIN reviews ON books.id = reviews.book_id
+    `);
+
+    const groupedBooks = {};
+
+    for (let row of rows) {
+      const {
+        book_id,
+        title,
+        author,
+        year,
+        availability,
+        review_id,
+        user_id,
+        rating,
+        comment
+      } = row;
+
+      if (!groupedBooks[book_id]) {
+        groupedBooks[book_id] = {
+          book_id,
+          title,
+          author,
+          year,
+          availability,
+          reviews: []
+        };
+      }
+
+      if (review_id) {
+        groupedBooks[book_id].reviews.push({
+          review_id,
+          user_id,
+          rating,
+          comment
+        });
+      }
+    }
+
+    const booksArray = Object.values(groupedBooks);
+
+    res.status(200).json({ books: booksArray });
+  } catch (error) {
+    console.error('Error fetching books with reviews:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+export const getBooksWithReviews = async (req, res) => {
+  try {
+    const [result] = await connection.execute(`
+      SELECT 
+        books.id AS book_id,
+        books.title,
+        books.author,
+        books.year,
+        books.availability,
+        reviews.id AS review_id,
+        reviews.user_id,
+        reviews.rating,
+        reviews.comment
+      FROM books
+      LEFT JOIN reviews ON books.id = reviews.book_id
+    `);
+
+    res.status(200).json({ data: result });
+  } catch (error) {
+    console.error('Error fetching joined book and review data:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+export const getBooksAndReviews = async (req, res) => {
+  try {
+    const [books] = await connection.execute('SELECT * FROM books');
+
+    const [reviews] = await connection.execute('SELECT * FROM reviews');
+
+    res.status(200).json({
+      books,
+      reviews
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
 
 export const getAverageRatings = async (req, res) => {
   try {

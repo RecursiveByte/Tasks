@@ -1,10 +1,13 @@
 import express from 'express';
-import {addBook,deleteBook,getAverageRatings, register,login,addReview,editReview,deleteReview, editBook} from '../controller/authController.js';
+import {addBook,deleteBook,finalData,getBooksWithReviews, getBooksAndReviews,getAverageRatings, register,login,addReview,editReview,deleteReview, editBook} from '../controller/authController.js';
 import { authenticateUser } from '../middlewares/userAuthMiddleWare.js';
 
 const router = express.Router();
 
+router.get('/getBooksAndReviews', getBooksAndReviews);
+router.get('/getBooksWithReviews', getBooksWithReviews);
 router.get('/average-ratings', getAverageRatings);
+router.get('/finalData', finalData);
 
 router.post('/register', register);
 router.post('/login', login);
