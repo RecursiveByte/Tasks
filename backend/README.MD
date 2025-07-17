@@ -22,6 +22,128 @@ The API uses JWT (JSON Web Tokens) for authentication. After successful login, t
 
 ## Endpoints
 
+# Book Management System API Documentation
+
+## Base URL
+```
+http://localhost:3000/api
+```
+
+---
+
+### 1. Get Books and Reviews (Separate)
+**GET** `/getBooksAndReviews`
+
+Returns books and reviews as separate arrays.
+
+**Response:**
+```json
+{
+  "books": [
+    {
+      "id": 1,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925,
+      "availability": true
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "book_id": 1,
+      "rating": 5,
+      "comment": "Excellent book!"
+    }
+  ]
+}
+```
+
+### 2. Get Books with Reviews (Joined)
+**GET** `/getBooksWithReviews`
+
+Returns raw joined data from books and reviews tables.
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "book_id": 1,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925,
+      "availability": true,
+      "review_id": 1,
+      "user_id": 1,
+      "rating": 5,
+      "comment": "Excellent book!"
+    }
+  ]
+}
+```
+
+### 3. Get Average Ratings
+**GET** `/average-ratings`
+
+Returns average ratings and review counts for all books.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "book_id": 1,
+      "average_rating": 4.5,
+      "total_reviews": 3
+    }
+  ]
+}
+```
+
+### 4. Get Final Data (Grouped)
+**GET** `/finalData`
+
+Returns books with their reviews grouped together in a structured format.
+
+**Response:**
+```json
+{
+  "books": [
+    {
+      "book_id": 1,
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "year": 1925,
+      "availability": true,
+      "reviews": [
+        {
+          "review_id": 1,
+          "user_id": 1,
+          "rating": 5,
+          "comment": "Excellent book!"
+        },
+        {
+          "review_id": 2,
+          "user_id": 2,
+          "rating": 4,
+          "comment": "Good read"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Error Response:**
+```json
+{
+  "message": "Internal server error"
+}
+```
+
 ### 1. Authentication
 
 #### Register User
